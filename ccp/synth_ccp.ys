@@ -1,0 +1,12 @@
+# synth_ccp.ys
+read_verilog -sv ccp_top.v
+
+hierarchy -top ccp_top
+proc
+opt
+memory
+opt
+techmap
+opt
+
+stat
