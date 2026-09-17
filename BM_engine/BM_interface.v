@@ -43,6 +43,7 @@ module BM_interface #(parameter T = 2, M = 4) (clk, rst, synd, done, sigma_out, 
                     end
                     count <= count + 1;
                     S_in <= synd[M * (count + 1) - 1 -: M];
+                    BM_start <= 0;
                 end
             endcase
         end
@@ -53,7 +54,7 @@ module BM_interface #(parameter T = 2, M = 4) (clk, rst, synd, done, sigma_out, 
         .rst(rst),
         .S_in(S_in),
         .start(BM_start),
-        .done_del(done),
+        .done(done),
         .sigma_out(sigma_out)
     );
 endmodule

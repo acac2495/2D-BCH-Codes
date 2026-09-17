@@ -49,19 +49,15 @@ module BM_top #(parameter T = 2, M = 4) (clk, rst, start, S_in, done, sigma_out,
         end
     endgenerate
 
-    always @(posedge clk) begin
-        if(rst) begin
-            sigma_out <= 0;
-        end
-        else begin
-            if(done) begin
-                for(i = 0; i <= T; i = i + 1) begin
-                    sigma_out[(i+1)*M - 1 -: M] <= sigma_reg[i];
-                end
+    always @(*) begin
+        sigma_out = 0;
+        if(done) begin
+            for(i = 0; i <= T; i = i + 1) begin
+                sigma_out[(i+1)*M - 1 -: M] <= sigma_reg[i];
             end
         end
     end
-
+    
     //Discrepancy calculation
     always @(*) begin
         d_mu = 0;

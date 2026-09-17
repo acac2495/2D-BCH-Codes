@@ -16,7 +16,7 @@ module ccp_top #(parameter T = 2, M = 4, N = 15) (clk, rst, r_in, start, done);
     output reg done;
 
     integer f;
-    reg [N*N-1:0] r_in_pipe [0:2*T+7];
+    reg [N*N-1:0] r_in_pipe [0:2*T+6];
 
     always @(posedge clk) begin
         if(rst) begin
@@ -246,6 +246,8 @@ module ccp_top #(parameter T = 2, M = 4, N = 15) (clk, rst, r_in, start, done);
             //row_ccp_done_reg <= row_ccp_done;
             col_ccp_done_reg <= col_done_flag_reg;
             row_ccp_done_reg <= row_done_flag_reg;
+            //col_ccp_done_reg <= col_done_flag;
+            //row_ccp_done_reg <= row_done_flag;
         end
     end
 
@@ -514,7 +516,7 @@ module ccp_top #(parameter T = 2, M = 4, N = 15) (clk, rst, r_in, start, done);
 
     wire [N*N - 1:0] corrected_res;
 
-    assign corrected_res = c_out ^ r_in_pipe[2*T+7];
+    assign corrected_res = c_out ^ r_in_pipe[2*T+6];
 
     always @(posedge clk) begin
         if(rst) begin
