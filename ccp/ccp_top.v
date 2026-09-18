@@ -65,6 +65,13 @@ module ccp_top #(parameter T = 2, M = 4, N = 15) (clk, rst, r_in, start, done);
 
     assign row_done_flag = |row_done;
 
+    wire [T-1:0] bm_busy_row;
+    wire [T-1:0] bm_busy_col;
+
+    wire row_busy, col_busy;
+    assign row_busy = |bm_busy_row;
+    assign col_busy = |bm_busy_col;
+
     generate
         for(i = 0; i < T; i = i + 1) begin
             BM_interface #(.M(M), .T(T)) BM_INST_ROW (
@@ -73,7 +80,8 @@ module ccp_top #(parameter T = 2, M = 4, N = 15) (clk, rst, r_in, start, done);
                 .start(start_row),
                 .synd(S_2t_reg[rep_idx(i)*2*T*M-1-:2*T*M]),
                 .sigma_out(row_sigma_arr[i]),
-                .done(row_done[i])
+                .done(row_done[i]),
+                .bm_busy(bm_busy_row[i])
             );
         end
     endgenerate
@@ -117,7 +125,8 @@ module ccp_top #(parameter T = 2, M = 4, N = 15) (clk, rst, r_in, start, done);
                 .start(start_col),
                 .synd(col_synd_2t_conjug[j]),
                 .sigma_out(col_sigma_arr[j]),
-                .done(col_done[j])
+                .done(col_done[j]),
+                .bm_busy(bm_busy_col[j])
             );
         end
     endgenerate

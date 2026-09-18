@@ -1,11 +1,11 @@
 `include "../common/GF_2_4_mult.v"
 `include "../common/GF_2_4_inv.v"
 
-module BM_top #(parameter T = 2, M = 4) (clk, rst, start, S_in, done, sigma_out, done_del);
+module BM_top #(parameter T = 2, M = 4) (clk, rst, start, S_in, done, sigma_out, done_del, bm_busy);
     input clk, rst, start;
     input [M-1:0] S_in;
     
-    output reg done, done_del;
+    output reg done, done_del, bm_busy;
     output reg [(T+1) * M - 1 : 0] sigma_out;
 
     //FSM States
@@ -53,7 +53,7 @@ module BM_top #(parameter T = 2, M = 4) (clk, rst, start, S_in, done, sigma_out,
         sigma_out = 0;
         if(done) begin
             for(i = 0; i <= T; i = i + 1) begin
-                sigma_out[(i+1)*M - 1 -: M] <= sigma_reg[i];
+                sigma_out[(i+1)*M - 1 -: M] = sigma_reg[i];
             end
         end
     end
@@ -125,6 +125,7 @@ module BM_top #(parameter T = 2, M = 4) (clk, rst, start, S_in, done, sigma_out,
             count <= 0;                             //initial count
             d_p <= 4'b1000;
             done <= 0;
+            bm_busy <= 0;
         end
         else begin
             case(state)
@@ -146,6 +147,7 @@ module BM_top #(parameter T = 2, M = 4) (clk, rst, start, S_in, done, sigma_out,
                             end
                         end
                         d_p <= 4'b1000;
+                        bm_busy <= 1;
                     end
                     count <= 0;
                     done <= 0;
@@ -154,6 +156,9 @@ module BM_top #(parameter T = 2, M = 4) (clk, rst, start, S_in, done, sigma_out,
                     if(count == (2 * T - 1)) begin
                         state <= IDLE;
                         done <= 1;
+                    end
+                    if(count == (2 * T - 2)) begin
+                        bm_busy <= 0;
                     end
                     for(i = 0; i <= T; i = i + 1) begin
                         if(i == 0) begin

@@ -1,11 +1,12 @@
 `include "../BM_engine/BM_top.v"
 
-module BM_interface #(parameter T = 2, M = 4) (clk, rst, synd, done, sigma_out, start);
+module BM_interface #(parameter T = 2, M = 4) (clk, rst, synd, done, sigma_out, start, bm_busy);
     input clk, rst, start;
     input [2*T*M-1:0] synd;
 
     output done;
     output [(T+1)*M-1:0] sigma_out;
+    output bm_busy;
 
     localparam IDLE = 0;
     localparam SENDING = 1;
@@ -55,6 +56,7 @@ module BM_interface #(parameter T = 2, M = 4) (clk, rst, synd, done, sigma_out, 
         .S_in(S_in),
         .start(BM_start),
         .done(done),
-        .sigma_out(sigma_out)
+        .sigma_out(sigma_out),
+        .bm_busy(bm_busy)
     );
 endmodule
