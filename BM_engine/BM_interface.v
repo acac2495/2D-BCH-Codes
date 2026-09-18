@@ -11,10 +11,14 @@ module BM_interface #(parameter T = 2, M = 4) (clk, rst, synd, done, sigma_out, 
     localparam IDLE = 0;
     localparam SENDING = 1;
     reg [1:0] state;
+
+    wire bm_top_busy;
     
     reg [M-1:0] S_in;
     reg BM_start;
     reg [$clog2(2*T)-1:0] count;
+
+    assign bm_busy = bm_top_busy || (state == SENDING);
 
     always @(posedge clk) begin
         if(rst) begin
@@ -57,6 +61,6 @@ module BM_interface #(parameter T = 2, M = 4) (clk, rst, synd, done, sigma_out, 
         .start(BM_start),
         .done(done),
         .sigma_out(sigma_out),
-        .bm_busy(bm_busy)
+        .bm_busy(bm_top_busy)
     );
 endmodule

@@ -11,22 +11,8 @@ module ccp_tb;
     reg start;
 
     reg [N-1:0] codeword_mem [0:N-1];
+    
     integer i, j;
-    initial begin
-        $readmemh("codeword.hex", codeword_mem);
-        for(i = 0; i < N; i = i + 1) begin
-            $display("%b", codeword_mem[i]);
-        end
-    end
-
-    always @(*) begin
-        r_in = 0;
-        for(i = 0; i < N; i = i + 1) begin
-            for(j = 0; j < N; j = j + 1) begin
-                r_in[N*i + j] = codeword_mem[i][j];
-            end
-        end
-    end
 
     ccp_top #(.M(M), .N(N), .T(T)) DUT (
         .r_in(r_in),
@@ -34,6 +20,26 @@ module ccp_tb;
         .rst(rst),
         .start(start)
     );
+
+    task send_codeword;
+        input integer idx;
+        integer i, j;
+        reg [8*64-1:0] file_name; // 64-character buffer
+        begin : send_codeword_block
+            $swrite(file_name, "codeword_%0d.hex", idx);
+            $readmemh(file_name, codeword_mem);
+
+            start = 1;
+            r_in = 0;
+            for(i = 0; i < N; i = i + 1) begin
+                for(j = 0; j < N; j = j + 1) begin
+                    r_in[N*i + j] = codeword_mem[i][j];
+                end
+            end
+            #10;
+            start = 0;
+        end
+    endtask
 
     always #5 clk = ~clk;
 
@@ -50,10 +56,30 @@ module ccp_tb;
         #5;
         rst = 0;
 
+        send_codeword(1);
+
+        #50;
+
+        send_codeword(2);
+
+        #50;
+
+        send_codeword(1);
+
+        #50;
+        
+        send_codeword(2);
+
+        #50;
+        
+        send_codeword(1);
+
+        #50;
         start = 1;
         #10;
         start = 0;
-        #200;
+
+        #300;
         $finish;
     end
 endmodule

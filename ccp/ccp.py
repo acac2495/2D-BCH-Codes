@@ -55,7 +55,21 @@ c[8][6] = 1
 for row in c:
     print(row)
 
-grid = dfft(c, t, n)
-print_grid(grid, t)
-gen_codeword_hex(c, n)
+#grid = dfft(c, t, n)
+#print_grid(grid, t)
+gen_codeword_hex(c, n, "codeword_1.hex")
+
+print(" ")
+
+c = [[0] * n for i in range(n)]
+
+c[0][5] = 1
+c[0][6] = 1
+c[1][5] = 1
+c[1][6] = 1
+
+for row in c:
+    print(row)
+
+gen_codeword_hex(c, n, "codeword_2.hex")
 

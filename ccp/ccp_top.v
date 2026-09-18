@@ -16,28 +16,29 @@ module ccp_top #(parameter T = 2, M = 4, N = 15) (clk, rst, r_in, start, done);
     output reg done;
 
     integer f;
-    reg [N*N-1:0] r_in_pipe [0:2*T+6];
 
-    always @(posedge clk) begin
-        if(rst) begin
-            for(f = 0; f <= 2*T + 7; f = f + 1) begin
-                r_in_pipe[f] <= 0;
-            end
-        end
-        else begin
-            if(start) begin
-                r_in_pipe[0] <= r_in;
-            end
-            for(f = 1; f <= 2*T + 7; f = f + 1) begin
-                r_in_pipe[f] <= r_in_pipe[f-1];
-            end
-        end
-    end
+    wire ready;
+    reg [N*N-1:0] r_in_captured, r_in_captured1;
 
     wire [(2*T)*(2*T)*M-1:0] S_2t;
 
-    reg [(2*T)*(2*T)*M-1:0] S_2t_reg;
+    reg [(2*T)*(2*T)*M-1:0] S_2t_reg, S_2t_reg1;
     reg start_row, start_col;
+
+    always @(posedge clk) begin
+        if(rst) begin
+            r_in_captured <= 0;
+            r_in_captured1 <= 0;
+            S_2t_reg <= 0;
+            S_2t_reg1 <= 0;
+        end
+        else if(start && ready) begin
+            r_in_captured <= r_in;
+            r_in_captured1 <= r_in_captured;
+            S_2t_reg <= S_2t;
+            S_2t_reg1 <= S_2t_reg;
+        end
+    end
     
     function integer rep_idx;
         input integer r;
@@ -71,6 +72,8 @@ module ccp_top #(parameter T = 2, M = 4, N = 15) (clk, rst, r_in, start, done);
     wire row_busy, col_busy;
     assign row_busy = |bm_busy_row;
     assign col_busy = |bm_busy_col;
+
+    assign ready = ~(start_row | start_col | row_busy | col_busy);
 
     generate
         for(i = 0; i < T; i = i + 1) begin
@@ -112,7 +115,7 @@ module ccp_top #(parameter T = 2, M = 4, N = 15) (clk, rst, r_in, start, done);
         for (j = 1; j <= 2*T; j = j + 1) begin : FULL_COL_GATHER
             for (k = 1; k <= 2*T; k = k + 1) begin : STACK
                 assign col_synd_int[j-1][M*k-1 -: M] =
-                    S_2t_reg[ ((k-1)*2*T + (j-1) + 1) * M - 1 -: M ];
+                    S_2t_reg1[ ((k-1)*2*T + (j-1) + 1) * M - 1 -: M ];
             end
         end
     endgenerate
@@ -141,14 +144,12 @@ module ccp_top #(parameter T = 2, M = 4, N = 15) (clk, rst, r_in, start, done);
         if(rst) begin
             start_col <= 0;
             start_row <= 0;
-            S_2t_reg <= 0;
             row_done_flag_reg <= 0;
             col_done_flag_reg <= 0;
         end
         else begin
-            S_2t_reg <= S_2t;
-            start_row <= start;
-            start_col <= start;
+            start_row <= start && ready;
+            start_col <= start && ready;
             row_done_flag_reg <= row_done_flag;
             col_done_flag_reg <= col_done_flag;
         end
@@ -525,7 +526,7 @@ module ccp_top #(parameter T = 2, M = 4, N = 15) (clk, rst, r_in, start, done);
 
     wire [N*N - 1:0] corrected_res;
 
-    assign corrected_res = c_out ^ r_in_pipe[2*T+6];
+    assign corrected_res = c_out ^ r_in_captured1;
 
     always @(posedge clk) begin
         if(rst) begin
@@ -564,7 +565,7 @@ module ccp_top #(parameter T = 2, M = 4, N = 15) (clk, rst, r_in, start, done);
     integer p,q;
 
     always @(posedge clk) begin
-        if(col_done_flag_reg) begin
+        /*if(col_done_flag_reg) begin
             $display("Received Code Word : ");
             for (p = 0; p < N; p = p + 1) begin
                 for (q = 0; q < N; q = q + 1) begin
@@ -686,9 +687,9 @@ module ccp_top #(parameter T = 2, M = 4, N = 15) (clk, rst, r_in, start, done);
                 end
                 $display("");
             end
-        end
+        end*/
         if(row_re_done_reg) begin
-            $display("full syndrome after row recursive extension : ");
+            /*$display("full syndrome after row recursive extension : ");
             for(p = 0; p < N; p = p + 1) begin
                 for(q = 0; q < N; q = q + 1) begin
                     $write("%s ", gf_str(synd_full_reg[p][(q+1)*M-1 -: M]));
@@ -699,7 +700,7 @@ module ccp_top #(parameter T = 2, M = 4, N = 15) (clk, rst, r_in, start, done);
             for (c = 0; c < TOTAL_CLASSES; c = c + 1) begin
                 $write("%s ", gf_str(classes[M*(c+1)-1 -: M]));
             end
-            $display("");
+            $display("");*/
             $display("Obtained error vector : ");
             for(p = 0; p < N; p = p + 1) begin
                 for(q = 0; q < N; q = q + 1) begin
