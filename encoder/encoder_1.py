@@ -233,8 +233,8 @@ print("codeword : ")
 for row in c:
     print(row)
 
-C = dffft(c, n)
+#C = dffft(c, n)
 
-print("spectrum : ")
-for row in C:
-    print(row)
+#print("spectrum : ")
+#for row in C:
+#    print(row)

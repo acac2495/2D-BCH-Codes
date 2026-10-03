@@ -1,5 +1,5 @@
-`include "idffft_top.v"
-`include "sub_msg.v"
+`include "../encoder/idffft_top1.v"
+`include "../encoder/sub_msg.v"
 
 module encoder_top #(parameter M = 4, COUNT_1 = 1, COUNT_2 = 4, COUNT_4 = 43, N = 15) (msg, code);
     localparam TOTAL_CLASSES = COUNT_1 + COUNT_2 + COUNT_4;
@@ -20,7 +20,7 @@ module encoder_top #(parameter M = 4, COUNT_1 = 1, COUNT_2 = 4, COUNT_4 = 43, N 
     generate
         for(i = 0; i < N; i = i + 1) begin
             for(ip = 0; ip < N; ip = ip + 1) begin
-                idffft_top #(.M(M), .COUNT_1(COUNT_1), .COUNT_2(COUNT_2), .COUNT_4(COUNT_4), .M(M), .I(i), .IP(ip)) IDFFFT_INST (
+                idffft_top1 #(.M(M), .COUNT_1(COUNT_1), .COUNT_2(COUNT_2), .COUNT_4(COUNT_4), .M(M), .I(i), .IP(ip)) IDFFFT_INST (
                     .classes(classes),
                     .c_out(code[N * i + ip])
                 );
