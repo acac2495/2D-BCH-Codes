@@ -43,7 +43,8 @@ other (n, t) choices need parameter changes rather than a redesign, except where
 8. [Design notes](#design-notes)
 9. [Known limitations](#known-limitations)
 10. [Repository structure](#repository-structure)
-11. [References](#references)
+11. [Figure credits](#figure-credits)
+12. [References](#references)
 
 ---
 
@@ -137,6 +138,16 @@ GF(2⁴) product at the insertion point is needed (paper eqs. 10 and 11). That r
 of AND/XOR gates (5 AND + 4 XOR for size 4, 6 AND + 5 XOR for size 2). The paper reports roughly a **94 %
 reduction in gates per IDFFFT point** compared with the brute-force evaluation.
 
+#### Reference figure from the paper
+
+<p align="center">
+  <img src="docs/figures/fig5_encoder_and_idffft.png" alt="Paper Fig. 5: (a) 2-D BCH encoder architecture, (b) 2-D IDFFFT block at (i, i')" width="900">
+</p>
+
+*Paper Fig. 5. (a) Encoder architecture: a message-to-sub-messages converter feeding n² parallel IDFFFT units.
+(b) The IDFFFT block at a point (i, i'): one conjugate-class unit per message class, combined by an XOR array.
+Reproduced from Mondal and Garani (2021); see [Figure credits](#figure-credits).*
+
 ### Decoder
 
 The decoder follows the paper's modified Blahut algorithm (Algorithm 3). A 2t × 2t window of syndromes is
@@ -190,9 +201,26 @@ flowchart LR
 | ① DFFFT | Syndromes over the 2t × 2t window | 1 | Only the 11 independent syndromes are computed from `r`; the other 5 come from squaring |
 | ② BM | Locator polynomial for each non-conjugate row and column | 2t | Conjugate rows/columns share a polynomial, so only c_p engines per direction are needed |
 | ③ CCP | Merge polynomials into one common polynomial | 1 | Union of root sets = roots of the lcm, found with an OR array instead of polynomial arithmetic |
-| ④ RE | Extend 2t known syndromes to all n | 1 | Cascaded RE base cells (`n − 2t` multiply-accumulate stages) |
+| ④ RE | Extend 2t known syndromes to all n | 2 | Cascaded RE base cells (`n − 2t` multiply-accumulate stages) |
 | ⑤ IDFFFT | Error array in the time domain | 1 | Same conjugacy trick as the encoder |
 | | **Latency (target)** | **2t + 5 = 9** | |
+
+#### Reference figures from the paper
+
+<p align="center">
+  <img src="docs/figures/fig8_decoder_top_level.png" alt="Paper Fig. 8: top-level architecture of the 2-D BCH decoder" width="900">
+</p>
+
+*Paper Fig. 8. Top-level decoder: 2-D DFFFT, parallel BM engines on non-conjugate columns and rows, column and
+row connection polynomial finders, recursive extension (columns, then rows), 2-D IDFFFT, and a final XOR with the
+delayed received array. Dotted lines mark the pipeline-register boundaries.*
+
+<p align="center">
+  <img src="docs/figures/fig9_dffft.png" alt="Paper Fig. 9: 2-D DFFFT finder architecture" width="520">
+</p>
+
+*Paper Fig. 9. (a) The 2-D DFFFT finder: 2t × 2t parallel DFFFT units. (b) One DFFFT unit: n² multiplexers select
+either the constant α^(ij+i'j') or zero depending on the input bit, and an XOR array sums the results.*
 
 #### Berlekamp–Massey engine
 
@@ -213,6 +241,14 @@ flowchart LR
     KEEP --> SIG
     UPD -.->|"on length change"| BAK
 ```
+
+<p align="center">
+  <img src="docs/figures/fig10_bm_engine.png" alt="Paper Fig. 10: Berlekamp-Massey engine architecture" width="820">
+</p>
+
+*Paper Fig. 10. BM engine datapath: rotating syndrome register and "temporary register" produce the discrepancy
+d<sub>μ</sub> through adder Σ₁; adder Σ₂ and the d<sub>μ</sub>·d<sub>ρ</sub>⁻¹ multiplier update σ<sup>(μ)</sup>,
+while σ<sup>(ρ)</sup> is stored pre-shifted by x to avoid a barrel shifter.*
 
 #### Common connection polynomial finder
 
@@ -480,6 +516,14 @@ vvp sim_ccp
 ├── ccp/                   top-level decoder (ccp_top.v)
 └── README.md
 ```
+
+---
+
+## Figure credits
+
+Figures 5, 8, 9, and 10 under `docs/figures/` are taken from Mondal and Garani (2021), © IEEE, and are included
+here only to document the architecture this code implements. All other diagrams in this README are original.
+The paper itself is available at [doi.org/10.1109/TMAG.2021.3060807](https://doi.org/10.1109/TMAG.2021.3060807).
 
 ---
 
