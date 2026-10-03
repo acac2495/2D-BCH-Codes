@@ -68,7 +68,7 @@ The code is the set of arrays whose spectrum is **zero** at the 2t × 2t positio
 guarantees correction of any t×t quasi-cyclic burst. Because the codeword is binary, the spectrum must also
 satisfy the **conjugacy constraint**
 
-$$C_{2j,\,2j'} = C_{j,j'}^{\,2}$$
+$$C_{2j\,2j'} = C_{j,j'}^{\,2}$$
 
 which splits the 225 spectral positions into **59 conjugate classes** (11 classes of forced zeros, 48 classes that
 carry the message). Only one position per class (the *insertion point*, IP) carries independent information. The
