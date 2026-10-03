@@ -13,7 +13,8 @@ module ccp_top #(parameter T = 2, M = 4, N = 15) (clk, rst, r_in, start, done);
     input clk, rst;
     input start;
 
-    output reg done;
+    //output reg done;
+    output done;
 
     integer f;
 
@@ -137,6 +138,8 @@ module ccp_top #(parameter T = 2, M = 4, N = 15) (clk, rst, r_in, start, done);
     reg [(T+1)*M-1:0] col_sigma_arr_reg [0:T-1];
     reg [(T+1)*M-1:0] row_sigma_arr_reg [0:T-1];
 
+    reg [(T+1)*M*T-1:0] col_sigma_arr_flat, row_sigma_arr_flat;
+
     reg col_done_flag_reg;
     reg row_done_flag_reg;
 
@@ -163,11 +166,15 @@ module ccp_top #(parameter T = 2, M = 4, N = 15) (clk, rst, r_in, start, done);
                 col_sigma_arr_reg[ip] <= 0;
                 row_sigma_arr_reg[ip] <= 0;
             end
+            col_sigma_arr_flat <= 0;
+            row_sigma_arr_flat <= 0;
         end
         else begin
             for(ip = 0; ip < T; ip = ip + 1) begin
                 col_sigma_arr_reg[ip] <= col_sigma_arr[ip];
                 row_sigma_arr_reg[ip] <= row_sigma_arr[ip];
+                col_sigma_arr_flat[(ip+1)*(T+1)*M-1 -: (T+1)*M] <= col_sigma_arr[ip];
+                row_sigma_arr_flat[(ip+1)*(T+1)*M-1 -: (T+1)*M] <= row_sigma_arr[ip];
             end
         end
     end
@@ -528,14 +535,16 @@ module ccp_top #(parameter T = 2, M = 4, N = 15) (clk, rst, r_in, start, done);
 
     assign corrected_res = c_out ^ r_in_captured1;
 
-    always @(posedge clk) begin
+    /*always @(posedge clk) begin
         if(rst) begin
             done <= 0;
         end
         else begin
             done <= row_re_done_reg;
         end
-    end
+    end*/
+
+    assign done = row_re_done_reg;
 
     function [8*6-1:0] gf_str;
         input [M-1:0] val;

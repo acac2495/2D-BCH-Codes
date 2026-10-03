@@ -58,23 +58,23 @@ module ccp_tb;
 
         send_codeword(1);
 
-        #50;
+        #40;
 
         send_codeword(2);
 
-        #50;
+        #40;
 
         send_codeword(1);
 
-        #50;
+        #40;
         
         send_codeword(2);
 
-        #50;
+        #40;
         
         send_codeword(1);
 
-        #50;
+        #40;
         start = 1;
         #10;
         start = 0;

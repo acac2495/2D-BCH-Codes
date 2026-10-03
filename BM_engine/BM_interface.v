@@ -20,25 +20,30 @@ module BM_interface #(parameter T = 2, M = 4) (clk, rst, synd, done, sigma_out, 
 
     assign bm_busy = bm_top_busy || (state == SENDING);
 
+    always @(*) begin
+        S_in = synd[M * (count + 1) - 1 -: M];
+        BM_start = start;
+    end
+
     always @(posedge clk) begin
         if(rst) begin
             count <= 0;
             state <= IDLE;
-            BM_start <= 0;
-            S_in <= 0;
+            //BM_start <= 0;
+            //S_in <= 0;
         end
         else begin
             case(state)
                 IDLE : begin
                     if(start) begin
                         state <= SENDING;
-                        BM_start <= 1;
-                        S_in <= synd[M * (count + 1) - 1 -: M];
+                        //BM_start <= 1;
+                        //S_in <= synd[M * (count + 1) - 1 -: M];
                         count <= 1;
                     end
                     else begin
-                        BM_start <= 0;
-                        S_in <= 0;
+                        //BM_start <= 0;
+                        //S_in <= 0;
                         count <= 0;
                     end
                 end
@@ -47,8 +52,8 @@ module BM_interface #(parameter T = 2, M = 4) (clk, rst, synd, done, sigma_out, 
                         state <= IDLE;
                     end
                     count <= count + 1;
-                    S_in <= synd[M * (count + 1) - 1 -: M];
-                    BM_start <= 0;
+                    //S_in <= synd[M * (count + 1) - 1 -: M];
+                    //BM_start <= 0;
                 end
             endcase
         end
