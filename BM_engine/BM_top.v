@@ -170,9 +170,9 @@ module BM_top #(parameter T = 2, M = 4) (clk, rst, start, S_in, done, sigma_out,
                             sigma_p[i] <= sigma_store[i-1];     //shift by 1 implementation
                         end
                         sigma_reg[i] <= sigma_bus[i];           //storing in the t+1 data bus, as in the paper
-                        if(load_sigma) begin
-                            d_p <= d_mu;
-                        end
+                    end
+                    if(load_sigma) begin
+                        d_p <= d_mu;
                     end
                     count <= count + 1;
                 end

@@ -8,13 +8,15 @@
 `include "../common/root_to_coeff_comb.v"
 `include "../IDFFFT/idffft_synd.v"
 
-module ccp_top #(parameter T = 2, M = 4, N = 15) (clk, rst, r_in, start, done);
+module ccp_top #(parameter T = 2, M = 4, N = 15) (clk, rst, r_in, start, done, corrected_res, c_out);
     input [N*N-1:0] r_in;
     input clk, rst;
     input start;
 
     //output reg done;
     output done;
+    output [N*N-1:0] corrected_res;
+    output [N*N-1:0] c_out;
 
     integer f;
 
@@ -524,14 +526,10 @@ module ccp_top #(parameter T = 2, M = 4, N = 15) (clk, rst, r_in, start, done);
         end
     end
 
-    wire [N*N - 1:0] c_out;
-
     idffft_synd #(.COUNT_1(COUNT_1), .COUNT_2(COUNT_2), .COUNT_4(COUNT_4), .M(M), .N(N)) IDFFFT (
         .classes(classes),
         .c_out(c_out)
     );
-
-    wire [N*N - 1:0] corrected_res;
 
     assign corrected_res = c_out ^ r_in_captured1;
 
@@ -630,7 +628,8 @@ module ccp_top #(parameter T = 2, M = 4, N = 15) (clk, rst, r_in, start, done);
             end
             $display("");
         end
-        if(row_done_flag_reg) begin
+        */
+        /*if(row_done_flag_reg) begin
             $display("Row location polynomials : ");
             for(p = 0; p < T; p = p + 1) begin
                 for(q = 0; q <= T; q = q + 1) begin

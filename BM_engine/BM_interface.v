@@ -39,7 +39,7 @@ module BM_interface #(parameter T = 2, M = 4) (clk, rst, synd, done, sigma_out, 
                         state <= SENDING;
                         //BM_start <= 1;
                         //S_in <= synd[M * (count + 1) - 1 -: M];
-                        count <= 1;
+                        count <= count + 1;
                     end
                     else begin
                         //BM_start <= 0;
