@@ -62,7 +62,7 @@ a burst lies along a row or a column.
 
 A 2-D codeword **c** is defined by its spectrum **C** (the 2-D discrete finite-field Fourier transform, DFFFT):
 
-$$C_{j,j'} = \sum_{i=0}^{n-1}\sum_{i'=0}^{n-1} \alpha^{ij}\\beta^{i'j'}\c_{i,i'}$$
+$$C_{j,j'} = \sum_{i=0}^{n-1}\sum_{i'=0}^{n-1} \alpha^{ij}\\beta^{i'j'}\ c_{i,i'}$$
 
 The code is the set of arrays whose spectrum is **zero** at the 2t × 2t positions `1 ≤ j, j' ≤ 2t`. That
 guarantees correction of any t×t quasi-cyclic burst. Because the codeword is binary, the spectrum must also
