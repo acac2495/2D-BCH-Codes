@@ -4,7 +4,7 @@ module tb_top;
     localparam N = 15;
     localparam M = 4;
     localparam T = 2;
-    localparam DEPTH = 16;
+    localparam DEPTH = 50;
 
     reg clk, rst, start;
     wire done;
@@ -20,10 +20,13 @@ module tb_top;
 
     always #5 clk = ~clk;
 
+    integer n_corrected, n_mismatched;
     initial begin
-        $dumpfile("waveform.vcd");
-        $dumpvars(0, tb_top);
-        
+        n_corrected = 0;
+        n_mismatched = 0;
+    end
+
+    initial begin
         clk = 0;
         rst = 0;
         start = 0;
@@ -38,8 +41,18 @@ module tb_top;
         #10;
         start = 0;
 
-        #400;
+        #120000;
+        $display("Mismatched : %0d" , n_mismatched);
         $finish;
     end
 
+    always @(posedge clk) begin
+        if(done) begin
+            n_corrected <= n_corrected + 1;
+            if(corrected_res != 0) begin
+                $display("Mismatched at : %0d", n_corrected);
+                n_mismatched = n_mismatched + 1;
+            end
+        end
+    end
 endmodule

@@ -20,6 +20,9 @@ module ccp_top #(parameter T = 2, M = 4, N = 15) (clk, rst, r_in, start, done, c
 
     integer f;
 
+    //integer fail_fd;
+    //initial fail_fd = $fopen("../Protocol/failed_words.hex", "w");
+
     wire ready;
     reg [N*N-1:0] r_in_captured, r_in_captured1;
 
@@ -572,11 +575,11 @@ module ccp_top #(parameter T = 2, M = 4, N = 15) (clk, rst, r_in, start, done, c
     integer p,q;
 
     always @(posedge clk) begin
-        /*if(col_done_flag_reg) begin
+        if(col_done_flag_reg) begin
             $display("Received Code Word : ");
             for (p = 0; p < N; p = p + 1) begin
                 for (q = 0; q < N; q = q + 1) begin
-                    $write("%b ", r_in[N*p + q]);
+                    $write("%b ", r_in_captured1[N*p + q]);
                 end
                 $display("");
             end
@@ -628,8 +631,8 @@ module ccp_top #(parameter T = 2, M = 4, N = 15) (clk, rst, r_in, start, done, c
             end
             $display("");
         end
-        */
-        /*if(row_done_flag_reg) begin
+        
+        if(row_done_flag_reg) begin
             $display("Row location polynomials : ");
             for(p = 0; p < T; p = p + 1) begin
                 for(q = 0; q <= T; q = q + 1) begin
@@ -695,8 +698,8 @@ module ccp_top #(parameter T = 2, M = 4, N = 15) (clk, rst, r_in, start, done, c
                 end
                 $display("");
             end
-        end*/
-        if(row_re_done_reg) begin
+        end
+        if(done && |corrected_res) begin
             /*$display("full syndrome after row recursive extension : ");
             for(p = 0; p < N; p = p + 1) begin
                 for(q = 0; q < N; q = q + 1) begin
@@ -709,6 +712,17 @@ module ccp_top #(parameter T = 2, M = 4, N = 15) (clk, rst, r_in, start, done, c
                 $write("%s ", gf_str(classes[M*(c+1)-1 -: M]));
             end
             $display("");*/
+            /*
+            $fdisplay(fail_fd, "%h", r_in_captured1);    
+            $fflush(fail_fd);                            
+            */
+            $display("Received Code Word : ");
+            for (p = 0; p < N; p = p + 1) begin
+                for (q = 0; q < N; q = q + 1) begin
+                    $write("%b ", r_in_captured1[N*p + q]);
+                end
+                $display("");
+            end
             $display("Obtained error vector : ");
             for(p = 0; p < N; p = p + 1) begin
                 for(q = 0; q < N; q = q + 1) begin

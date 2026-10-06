@@ -46,11 +46,8 @@ n = 15
 c = [[0] * n for i in range(n)]
 t = 2
 
-c[7][5] = 1
-c[7][6] = 1
-c[8][5] = 1
-c[8][6] = 1
-
+c[2][7] = 1
+c[1][9] = 1
 
 for row in c:
     print(row)
@@ -63,10 +60,8 @@ print(" ")
 
 c = [[0] * n for i in range(n)]
 
-c[0][5] = 1
-c[0][6] = 1
-c[1][5] = 1
-c[1][6] = 1
+c[2][7] = 1
+c[1][9] = 1
 
 for row in c:
     print(row)

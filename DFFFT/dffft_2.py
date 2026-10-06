@@ -60,8 +60,8 @@ n = 15
 c = [[0] * n for i in range(n)]
 t = 2
 
-c[0][1] = 1
-c[3][1] = 1
+c[2][7] = 1
+c[1][9] = 1
 
 for row in c:
     print(row)

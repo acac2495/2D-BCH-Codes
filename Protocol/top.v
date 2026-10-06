@@ -8,7 +8,7 @@ module top #(parameter N = 15, M = 4, T = 2, DEPTH = 16) (clk, rst, start, done,
 
     reg [N*N-1:0] mem [0:DEPTH-1];
     initial begin
-        $readmemh("codes.hex", mem);
+        $readmemh("../Protocol/failed_words.hex", mem);
     end
 
     localparam N_CYCLES = 6;

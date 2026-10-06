@@ -12,6 +12,8 @@ module BM_top #(parameter T = 2, M = 4) (clk, rst, start, S_in, done, sigma_out,
     localparam IDLE = 0;
     localparam COMPUTE = 1;
 
+    reg [2:0] L;
+
     //FSM variables
     reg [1:0] state;
     reg [$clog2(2 * T) - 1 : 0] count;
