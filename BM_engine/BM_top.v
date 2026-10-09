@@ -77,7 +77,7 @@ module BM_top #(parameter T = 2, M = 4) (clk, rst, start, S_in, done, sigma_out,
     end
 
     always @(*) begin
-        load_sigma = (d_mu != 0);
+        load_sigma = ((d_mu != 0) && ((L << 1) <= count)) ? 1 : 0;
     end
 
     wire [M-1:0] d_p_inv;       //stores inverse of d_p
@@ -128,6 +128,7 @@ module BM_top #(parameter T = 2, M = 4) (clk, rst, start, S_in, done, sigma_out,
             d_p <= 4'b1000;
             done <= 0;
             bm_busy <= 0;
+            L <= 0;
         end
         else begin
             case(state)
@@ -150,6 +151,7 @@ module BM_top #(parameter T = 2, M = 4) (clk, rst, start, S_in, done, sigma_out,
                         end
                         d_p <= 4'b1000;
                         bm_busy <= 1;
+                        L <= 0;
                     end
                     count <= 0;
                     done <= 0;
@@ -175,6 +177,7 @@ module BM_top #(parameter T = 2, M = 4) (clk, rst, start, S_in, done, sigma_out,
                     end
                     if(load_sigma) begin
                         d_p <= d_mu;
+                        L <= count + 1 - L;
                     end
                     count <= count + 1;
                 end

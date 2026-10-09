@@ -4,7 +4,7 @@ module tb_top;
     localparam N = 15;
     localparam M = 4;
     localparam T = 2;
-    localparam DEPTH = 50;
+    localparam DEPTH = 1000;
 
     reg clk, rst, start;
     wire done;
@@ -52,6 +52,10 @@ module tb_top;
             if(corrected_res != 0) begin
                 $display("Mismatched at : %0d", n_corrected);
                 n_mismatched = n_mismatched + 1;
+            end
+            else begin
+                $display("Corrected at : %0d", n_corrected);
+                $display("%h", corrected_res);
             end
         end
     end

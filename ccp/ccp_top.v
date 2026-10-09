@@ -575,7 +575,7 @@ module ccp_top #(parameter T = 2, M = 4, N = 15) (clk, rst, r_in, start, done, c
     integer p,q;
 
     always @(posedge clk) begin
-        if(col_done_flag_reg) begin
+        /*if(col_done_flag_reg) begin
             $display("Received Code Word : ");
             for (p = 0; p < N; p = p + 1) begin
                 for (q = 0; q < N; q = q + 1) begin
@@ -698,8 +698,8 @@ module ccp_top #(parameter T = 2, M = 4, N = 15) (clk, rst, r_in, start, done, c
                 end
                 $display("");
             end
-        end
-        if(done && |corrected_res) begin
+        end*/
+        if(done && ~|corrected_res) begin
             /*$display("full syndrome after row recursive extension : ");
             for(p = 0; p < N; p = p + 1) begin
                 for(q = 0; q < N; q = q + 1) begin
@@ -712,11 +712,11 @@ module ccp_top #(parameter T = 2, M = 4, N = 15) (clk, rst, r_in, start, done, c
                 $write("%s ", gf_str(classes[M*(c+1)-1 -: M]));
             end
             $display("");*/
-            /*
-            $fdisplay(fail_fd, "%h", r_in_captured1);    
-            $fflush(fail_fd);                            
-            */
-            $display("Received Code Word : ");
+            
+            //$fdisplay(fail_fd, "%h", r_in_captured1);    
+            //$fflush(fail_fd);                            
+            
+            /*$display("Received Code Word : ");
             for (p = 0; p < N; p = p + 1) begin
                 for (q = 0; q < N; q = q + 1) begin
                     $write("%b ", r_in_captured1[N*p + q]);
@@ -736,7 +736,7 @@ module ccp_top #(parameter T = 2, M = 4, N = 15) (clk, rst, r_in, start, done, c
                     $write("%b ", corrected_res[N*p + q]);
                 end
                 $display("");
-            end  
+            end*/
         end 
     end
 endmodule
